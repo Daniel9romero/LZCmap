@@ -37,7 +37,7 @@ const CONFIG = {
   windowSize: 'w-[380px] h-[500px]',
 
   // Tiempo para mostrar notificación (ms)
-  notificationDelay: 5000,
+  notificationDelay: 2000,
 };
 // ============================================
 
@@ -59,20 +59,35 @@ export default function ChatBubble() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showEmbedMessage, setShowEmbedMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Detectar si está embebido
+  const isEmbed = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('embed') === 'true';
 
   // Simular notificación después del tiempo configurado
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!isOpen) {
-        setHasNotification(true);
+        if (isEmbed) {
+          // En modo embed, mostrar el mensaje de viñeta
+          setShowEmbedMessage(true);
+        } else {
+          setHasNotification(true);
+        }
       }
     }, CONFIG.notificationDelay);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isEmbed]);
 
   const handleOpenChat = () => {
+    // Si está embebido, toggle del mensaje
+    if (isEmbed) {
+      setShowEmbedMessage(!showEmbedMessage);
+      return;
+    }
+
     setIsOpen(true);
     setHasNotification(false);
   };
@@ -216,6 +231,29 @@ export default function ChatBubble() {
                 className="w-full h-full object-cover"
               />
             </motion.button>
+
+            {/* Mensaje para modo embed - estilo viñeta de chat */}
+            <AnimatePresence>
+              {showEmbedMessage && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -10, scale: 0.9 }}
+                  className="absolute bottom-4 left-24 w-72"
+                >
+                  <div className="relative bg-gray-900 text-white rounded-2xl rounded-bl-sm px-4 py-3 shadow-xl">
+                    <p className="text-sm font-medium">
+                      Este proyecto cuenta con un asistente virtual
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Visita el proyecto completo para resolver tus dudas
+                    </p>
+                    {/* Triángulo de viñeta */}
+                    <div className="absolute bottom-2 -left-2 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-gray-900 border-b-8 border-b-transparent"></div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
