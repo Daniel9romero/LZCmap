@@ -1,43 +1,40 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, X, Loader2, ExternalLink } from 'lucide-react';
+import { Send, X, Loader2, Info } from 'lucide-react';
 
 // ============================================
 // CONFIGURACIÓN - MODIFICA ESTOS VALORES
 // ============================================
 const CONFIG = {
-  // Webhook de n8n
-  webhookUrl: 'https://daniel9romero.app.n8n.cloud/webhook/0150c20a-915c-4ab8-bc99-716be8e97bae',
+  // Webhook de n8n - CAMBIA ESTO para tu proyecto
+  webhookUrl: 'https://TU-INSTANCIA.app.n8n.cloud/webhook/TU-WEBHOOK',
 
   // Información del asistente
-  assistantName: 'José Daniel López Romero',
-  assistantRole: 'Investigador LCZ',
-  assistantPhoto: `${import.meta.env.BASE_URL}Fotito.jpg`,
+  assistantName: 'Tu Nombre',
+  assistantRole: 'Tu Rol / Título',
+  assistantPhoto: '/tu-foto.jpg', // Coloca tu foto en la carpeta public/
 
   // Textos personalizables
-  welcomeMessage: '¡Hola! Soy José Daniel y estás viendo el mapa de Zonas Climáticas Locales de la Ciudad de México. Si tienes alguna duda sobre el proyecto, estoy aquí para apoyarte.',
-  inputPlaceholder: 'Escribe tu pregunta sobre LCZ...',
-  footerHint: 'Pregunta sobre el proyecto',
+  infoBannerText: 'Estoy aquí para resolver tus dudas',
+  inputPlaceholder: 'Escribe tu pregunta...',
+  footerHint: 'Pregunta lo que necesites',
   loadingText: 'Escribiendo...',
-  errorMessage: 'Lo siento, hubo un error. Por favor intenta de nuevo.',
-
-  // Enlace de contacto
-  portfolioUrl: 'https://daniel9romero.github.io/Portafolio/',
+  errorMessage: 'Lo siento, hubo un error al conectar con el servidor. Por favor intenta de nuevo.',
 
   // Colores (usa clases de Tailwind o valores hex)
-  accentColor: 'blue-500',
-  accentColorHex: 'rgba(59, 130, 246, 0.5)',
+  accentColor: 'protein-accent', // Color principal del tema
+  accentColorHex: 'rgba(76, 175, 80, 0.5)', // Para el glow del botón
 
   // Posición del chat
-  bubblePosition: 'bottom-6 left-6',
-  windowPosition: 'bottom-24 left-6',
+  bubblePosition: 'bottom-64 left-6', // Posición de la burbuja
+  windowPosition: 'bottom-24 left-6', // Posición de la ventana
 
   // Tamaños
-  bubbleSize: 'w-16 h-16',
-  windowSize: 'w-[380px] h-[500px]',
+  bubbleSize: 'w-20 h-20', // Tamaño de la burbuja
+  windowSize: 'w-[420px] h-[600px]', // Tamaño de la ventana
 
   // Tiempo para mostrar notificación (ms)
-  notificationDelay: 5000,
+  notificationDelay: 3000,
 };
 // ============================================
 
@@ -246,17 +243,14 @@ export default function ChatBubble() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-              {/* Welcome message */}
+              {/* Info banner */}
               {messages.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-start"
-                >
-                  <div className="max-w-[85%] bg-white/10 text-gray-200 rounded-2xl rounded-bl-sm px-4 py-3">
-                    <p className="text-sm leading-relaxed">{CONFIG.welcomeMessage}</p>
-                  </div>
-                </motion.div>
+                <div className="flex items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-xl py-2 px-3">
+                  <Info size={14} className="text-gray-400" />
+                  <p className="text-xs text-gray-400">
+                    {CONFIG.infoBannerText}
+                  </p>
+                </div>
               )}
 
               {messages.map((message) => (
@@ -269,12 +263,12 @@ export default function ChatBubble() {
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
                       message.isUser
-                        ? 'bg-blue-600 text-white rounded-br-sm'
+                        ? `bg-${CONFIG.accentColor} text-black rounded-br-sm`
                         : 'bg-white/10 text-gray-200 rounded-bl-sm'
                     }`}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
-                    <p className={`text-[10px] mt-1 ${message.isUser ? 'text-blue-200' : 'text-gray-500'}`}>
+                    <p className={`text-[10px] mt-1 ${message.isUser ? 'text-black/50' : 'text-gray-500'}`}>
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -321,15 +315,9 @@ export default function ChatBubble() {
                   <Send size={18} />
                 </button>
               </div>
-              <a
-                href={CONFIG.portfolioUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 mt-3 py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 hover:text-white text-xs transition-all"
-              >
-                <ExternalLink size={14} />
-                Contacto
-              </a>
+              <p className="text-[10px] text-gray-600 mt-2 text-center">
+                {CONFIG.footerHint}
+              </p>
             </div>
           </motion.div>
         )}

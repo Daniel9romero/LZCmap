@@ -1,0 +1,18 @@
+{
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(python:*)",
+      "Bash(git push:*)",
+      "Bash(cat:*)",
+      "Bash(gh repo rename:*)",
+      "Bash(git remote:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
